@@ -16,12 +16,17 @@ class TableInfo
 
   def timestamp_columns
     # TODO
-    @schema.select{|_col_name, col_type| timestamp_type.include?(col_type[:type])}.keys
+    @schema.select{|_col_name, col_type|
+                  timestamp_type.include?(col_type[:type])}
+                  .keys
   end
 
   def not_null_columns
     # TODO
-    arr_not_null = ["id","area_id", "name"]
+    @schema.select{|_col_name, col_type| 
+                  !col_type[:null] && !col_type[:auto_increment] && !col_type[:default] }
+                  .keys
+
   end
 
   def length_limit_data(headers)
