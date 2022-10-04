@@ -31,7 +31,7 @@ class TableInfo
     header_with_language = headers.select { |x| x.match(/\[en]|\[zh]/) }
     header_with_language.each do |header|
       header_without_language = header.split('[')[0]
-      limit = @schema["#{header_without_language}"][:limit]
+      limit = @schema["#{header_without_language}"][:limit] || 255
       @header_with_limit << [header, limit]
     end
     @header_with_limit
