@@ -9,16 +9,26 @@ class CsvValidator
     @table_info = table_info
     @csv = CSV.table(file_path, { header_converters: lambda { |header| header.to_s } })
     @errors = []
-    # TODO, add any initialize process if you need
   end
 
   def valid?
-    # TODO
-    true
+    check_empty(@csv)
+    check_duplicate_id(@csv)
+    @errors.empty?
   end
-
+  
   private
-
-  # TODO, implement any private methods you need
+  def check_empty(data)
+    @errors << "Empty Content" if data.empty?
+  end
+  
+  def check_duplicate_id(data)
+    dup_id = data["id"].select{|elm| data["id"].count(elm) > 1}.uniq
+    if data["id"].length == data["id"].uniq.length
+      true
+    else
+      @errors << "Duplicate Ids: #{dup_id}"
+    end
+  end
 end
 

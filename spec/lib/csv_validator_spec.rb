@@ -1,4 +1,6 @@
 require 'csv_validator'
+require 'table_info'
+
 
 RSpec.describe CsvValidator do
   let(:validator) do
