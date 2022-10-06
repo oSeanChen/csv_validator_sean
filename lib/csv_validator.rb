@@ -9,7 +9,6 @@ class CsvValidator
     @table_info = table_info
     @csv = CSV.table(file_path, { header_converters: lambda { |header| header.to_s } })
     @errors = []
-    @not_null_col = @table_info.not_null_columns
   end
 
   def valid?
