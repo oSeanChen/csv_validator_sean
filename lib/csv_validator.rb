@@ -17,8 +17,6 @@ class CsvValidator
     check_not_null(@csv)
     check_time(@csv)
     check_length_limit(@csv)
-
-
     @errors.empty?
   end
 
@@ -53,6 +51,13 @@ class CsvValidator
   end
 
   def check_length_limit(data)
+    @table_info.length_limit_data(data.headers).each do |col|
+      data.each_with_index do |value, index| 
+      limit = col[1]
+      value = value[col[0]]
+      @errors << "Length Limit Violation at #{col[0]}(#{col[1]}) in Row ID=#{index + 1}" if value.length > limit
+      end
+    end
   end
 end
 
