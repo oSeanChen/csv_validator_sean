@@ -16,6 +16,7 @@ class CsvValidator
     check_duplicate_id(@csv)
     check_not_null(@csv)
     check_time(@csv)
+    check_length_limit(@csv)
 
 
     @errors.empty?
@@ -34,6 +35,7 @@ class CsvValidator
       @errors << "Duplicate Ids: #{dup_id}"
     end
   end
+  
   def check_not_null(data)
     @table_info.not_null_columns.each do |col|
       data[col].each_with_index do |value, index|
@@ -41,12 +43,16 @@ class CsvValidator
       end
     end
   end
+  
   def check_time(data)
     @table_info.timestamp_columns.each do |col|
       data[col].each_with_index do |value, index|
         @errors <<  "Time Format Violation at #{col} in Row ID=#{index + 1}" if (DateTime.parse(value) rescue ArgumentError) == ArgumentError
       end
     end
+  end
+
+  def check_length_limit(data)
   end
 end
 
