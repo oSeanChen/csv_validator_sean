@@ -12,50 +12,46 @@ class CsvValidator
   end
 
   def valid?
-    check_empty(@csv)
-    check_duplicate_id(@csv)
-    check_not_null(@csv)
-    check_time(@csv)
-    check_length_limit(@csv)
+    check_empty
+    check_duplicate_id
+    check_not_null
+    check_time
+    check_length_limit
     @errors.empty?
   end
 
   private
-  def check_empty(data)
-    @errors << "Empty Content" if data.empty?
+  def check_empty
+    @errors << "Empty Content" if @csv.empty?
   end
   
-  def check_duplicate_id(data)
-    dup_id = data["id"].select{|elm| data["id"].count(elm) > 1}.uniq
-    if data["id"].length == data["id"].uniq.length
-      true
-    else
-      @errors << "Duplicate Ids: #{dup_id}"
-    end
+  def check_duplicate_id
+    dup_id = @csv["id"].select{|elm| @csv["id"].count(elm) > 1}.uniq
+    @errors << "Duplicate Ids: #{dup_id}" if dup_id.present?
   end
   
-  def check_not_null(data)
+  def check_not_null
     @table_info.not_null_columns.each do |col|
-      data[col].each_with_index do |value, index|
-        @errors << "Not Null Violation at #{col} in Row ID=#{index + 1}" if value.nil?
+      @csv[col].each.with_index(1) do |value, index|
+        @errors << "Not Null Violation at #{col} in Row ID=#{index}" if value.nil?
       end
     end
   end
   
-  def check_time(data)
+  def check_time
     @table_info.timestamp_columns.each do |col|
-      data[col].each_with_index do |value, index|
-        @errors <<  "Time Format Violation at #{col} in Row ID=#{index + 1}" if (DateTime.parse(value) rescue ArgumentError) == ArgumentError
+      @csv[col].each.with_index(1) do |value, index|
+        @errors <<  "Time Format Violation at #{col} in Row ID=#{index}" if (DateTime.parse(value) rescue ArgumentError) == ArgumentError
       end
     end
   end
 
-  def check_length_limit(data)
-    @table_info.length_limit_data(data.headers).each do |col|
-      data.each_with_index do |value, index| 
+  def check_length_limit
+    @table_info.length_limit_data(@csv.headers).each do |col|
+      @csv.each.with_index(1) do |value, index| 
       limit = col[1]
       value = value[col[0]]
-      @errors << "Length Limit Violation at #{col[0]}(#{col[1]}) in Row ID=#{index + 1}" if value.length > limit
+      @errors << "Length Limit Violation at #{col[0]}(#{col[1]}) in Row ID=#{index}" if value.length > limit
       end
     end
   end
